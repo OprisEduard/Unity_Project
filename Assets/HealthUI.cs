@@ -15,7 +15,16 @@ public class HealthBarUI : MonoBehaviour
 
     void Update()
     {
-        
-        healthSlider.value = playerHealth.currentHealth;
+
+        void Update()
+        {
+            if (playerHealth == null || healthSlider == null)
+            {
+                Debug.LogError("Referinta null!");
+                return;  
+            }
+
+            healthSlider.value = playerHealth.currentHealth;
+        }
     }
 }
