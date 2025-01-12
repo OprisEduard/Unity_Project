@@ -4,6 +4,23 @@ namespace Invector.vCharacterController
 {
     public class vThirdPersonController : vThirdPersonAnimator
     {
+		private Rigidbody rb;
+
+        public int maxJumps = 2; 
+        private int jumpsPerformed = 0;
+        public float jumpForce = 20.0f; 
+
+		
+		void Awake()
+        {
+            rb = GetComponent<Rigidbody>();
+
+            if (rb == null)
+            {
+                Debug.LogError("Rigidbody component is missing from this GameObject!");
+            }
+        }
+        // Funcția care controlează mișcarea folosind Root Motion
         public virtual void ControlAnimatorRootMotion()
         {
             if (!this.enabled) return;
@@ -18,6 +35,7 @@ namespace Invector.vCharacterController
                 MoveCharacter(moveDirection);
         }
 
+        // Controlul tipului de locomotie (spre exemplu, mișcare liberă sau cu strafe)
         public virtual void ControlLocomotionType()
         {
             if (lockMovement) return;
@@ -38,6 +56,7 @@ namespace Invector.vCharacterController
                 MoveCharacter(moveDirection);
         }
 
+        // Controlul rotației în funcție de direcția input-ului
         public virtual void ControlRotationType()
         {
             if (lockRotation) return;
@@ -46,7 +65,7 @@ namespace Invector.vCharacterController
 
             if (validInput)
             {
-                // calculate input smooth
+                // Calcularea input-ului
                 inputSmooth = Vector3.Lerp(inputSmooth, input, (isStrafing ? strafeSpeed.movementSmooth : freeSpeed.movementSmooth) * Time.deltaTime);
 
                 Vector3 dir = (isStrafing && (!isSprinting || sprintOnlyFree == false) || (freeSpeed.rotateWithCamera && input == Vector3.zero)) && rotateTarget ? rotateTarget.forward : moveDirection;
@@ -54,6 +73,7 @@ namespace Invector.vCharacterController
             }
         }
 
+        // Actualizarea direcției de mișcare
         public virtual void UpdateMoveDirection(Transform referenceTransform = null)
         {
             if (input.magnitude <= 0.01)
@@ -64,12 +84,9 @@ namespace Invector.vCharacterController
 
             if (referenceTransform && !rotateByWorld)
             {
-                //get the right-facing direction of the referenceTransform
                 var right = referenceTransform.right;
                 right.y = 0;
-                //get the forward direction relative to referenceTransform Right
                 var forward = Quaternion.AngleAxis(-90, Vector3.up) * right;
-                // determine the direction the player will face based on input and the referenceTransform's right and forward directions
                 moveDirection = (inputSmooth.x * right) + (inputSmooth.z * forward);
             }
             else
@@ -78,6 +95,7 @@ namespace Invector.vCharacterController
             }
         }
 
+        // Controlul sprint-ului
         public virtual void Sprint(bool value)
         {
             var sprintConditions = (input.sqrMagnitude > 0.1f && isGrounded &&
@@ -107,22 +125,52 @@ namespace Invector.vCharacterController
             }
         }
 
+        // Controlul mișcării pe lateral 
         public virtual void Strafe()
         {
             isStrafing = !isStrafing;
         }
 
+        // Funcția pentru Jump 
         public virtual void Jump()
         {
-            // trigger jump behaviour
-            jumpCounter = jumpTimer;
-            isJumping = true;
+            if (CanJump())
+            {
+                jumpCounter = jumpTimer;
+                isJumping = true;
 
-            // trigger jump animations
-            if (input.sqrMagnitude < 0.1f)
-                animator.CrossFadeInFixedTime("Jump", 0.1f);
-            else
-                animator.CrossFadeInFixedTime("JumpMove", .2f);
+
+                rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+
+                if (input.sqrMagnitude < 0.1f)
+                    animator.CrossFadeInFixedTime("Jump", 0.1f);
+                else
+                    animator.CrossFadeInFixedTime("JumpMove", 0.2f);
+
+                jumpsPerformed++;
+            }
+        }
+
+        // Verifică dacă personajul poate sări
+        private bool CanJump()
+        {
+            if (isGrounded)
+            {
+            
+                jumpsPerformed = 0;
+                return true; 
+            }
+
+            return jumpsPerformed < maxJumps;
+        }
+
+        // Apelează funcția Jump din Update
+        void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                Jump(); 
+            }
         }
     }
 }
