@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "com.soupday.cc3_unity_tools": "file:D:/_Programs/CC_Plugin/cc_unity_tools_URP-1.6.3.URP17",
     "com.unity.2d.sprite": "1.0.0",
     "com.unity.ai.navigation": "2.0.4",
     "com.unity.cinemachine": "3.1.2",
