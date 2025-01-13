@@ -49,7 +49,7 @@ public class MainMenu : MonoBehaviour
         UnityEditor.EditorApplication.isPlaying = false;
 #else
         // Quit the application in a built game
-        Application.Quit();
+        UnityEngine.Application.Quit();
 #endif
     }
 
