@@ -42995,7 +42995,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   points: 10
-  scoreManager: {fileID: 806136279}
 --- !u!1001 &416923260
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -90661,7 +90660,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   points: 10
-  scoreManager: {fileID: 806136279}
 --- !u!65 &895498294
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -183030,7 +183028,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   points: 10
-  scoreManager: {fileID: 806136279}
 --- !u!65 &1844035550
 BoxCollider:
   m_ObjectHideFlags: 0
